@@ -2,7 +2,7 @@
   "name": "datamart-client",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "M",
+  "author": "Molyp",
   "license": "MIT",
   "dependencies": {
     "react": "^17.0.1",
@@ -13,6 +13,9 @@
     "@babel/preset-react": "^7.12.7",
     "@babel/preset-typescript": "^7.12.7",
     "babel-loader": "^8.2.2",
-    "typescript": "^4.1.2"
+    "html-webpack-plugin": "^4.5.0",
+    "thread-loader": "^3.0.1",
+    "typescript": "^4.1.2",
+    "webpack": "^5.9.0"
   }
 }
