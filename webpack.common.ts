@@ -1,15 +1,24 @@
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
-const path = require('path');
+import { resolve } from 'path';
+import webpack from 'webpack';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import pkg from './package.json';
+
 // Plugins
 const HtmlwebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// import { resolve } from 'path';
-const resolve = require('path').resolve;
-// 环境
+
+// env
+export const isWindows = process.platform === 'win32';
 const isDev = process.env.NODE_ENV === 'development';
+const isPrd = process.env.NODE_ENV === 'production';
+const deployEnv = process.env.DELOY_ENV || 'vivo';
+
+// config
+const additionHash = isPrd ? '.[hash]' : '';
+export const PUBLIC_PATH = `/db/${deployEnv}/`;
 export const BUILD_RESOURCE_NAME = 'resources';
+
 // css loader
 const toStyleLoader = (suffix: string | Array<string>, loaderPrefix, options?) => {
   const suffixList = Array.isArray(suffix) ? suffix : [suffix];
@@ -50,13 +59,15 @@ const styleSupportList = [
   { suffix: ['sass', 'scss'], loaderPrefix: 'sass' },
   { suffix: ['styl'], loaderPrefix: 'stylus' },
 ];
-module.exports = {
+
+export default {
   entry: {
-    main: './src/index.tsx',
+    app: './src/index.tsx',
   },
   output: {
-    filename: '[name].[hash].js',
-    path: path.resolve('./dist'),
+    path: resolve(__dirname, 'build'),
+    publicPath: PUBLIC_PATH,
+    filename: `${BUILD_RESOURCE_NAME}/js/[name]${additionHash}.js`,
   },
   module: {
     rules: [
@@ -88,16 +99,44 @@ module.exports = {
     ],
   },
   plugins: [
-    new HtmlWebPackPlugin({
-      template: 'index.html',
+    // 复制静态资源
+    new CopyWebpackPlugin({
+      patterns: [{ from: 'public', to: BUILD_RESOURCE_NAME, toType: 'dir' }],
     }),
-    // new CleanWebpackPlugin(['dist']),
+    // 全局变量定义
+    new webpack.DefinePlugin({
+      isPrd: JSON.stringify(isPrd),
+      isDev: JSON.stringify(isDev),
+      isWindows: JSON.stringify(process.platform === 'win32'),
+      deployEnv: JSON.stringify(deployEnv),
+      PUBLIC_PATH: JSON.stringify(PUBLIC_PATH),
+    }),
+    // 提取css
+    new MiniCssExtractPlugin({
+      filename: `${BUILD_RESOURCE_NAME}/css/style${additionHash}.css`,
+      chunkFilename: `${BUILD_RESOURCE_NAME}/css/[id]${additionHash}.css`,
+    }),
+    // 确保 vendors 的 chunkhash 只随内容变化
+    // @see https://webpack.js.org/guides/caching/#module-identifiers
+    new webpack.HashedModuleIdsPlugin(),
+    new HtmlwebpackPlugin({
+      title: 'Loading...',
+      version: `${pkg.version}`,
+      publishDate: new Date().toLocaleString(),
+      filename: 'index.html',
+      // favicon: `src/assets/favicon-${deployEnv}.ico`,
+      template: 'index.html',
+      inject: true,
+      minify: {
+        collapseInlineTagWhitespace: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+      },
+    }),
+    // typescript type check
+    new ForkTsCheckerWebpackPlugin(),
   ],
-  devServer: {
-    host: 'localhost',
-    port: 3000,
-    open: true,
-  },
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.json'],
     alias: {
