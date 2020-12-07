@@ -1,6 +1,11 @@
 import React from 'react';
 
-const App = () => {
+interface AppProp {
+  id?: number;
+  name: string;
+}
+
+const App: React.FC<AppProp> = () => {
   return (
     <>
       <p>hello,world111!</p>
