@@ -31,11 +31,7 @@ const devServer = {
   // before: ENABLE_MOCK_SERVER ? mockServer : undefined,
   // proxy: {
   //   [`${PUBLIC_PATH}api`]: {
-  //     target: 'http://dev-vivo-db.cr-nielsen.com/', // dev
-  //     // target: 'http://180.169.94.52:8086',
-  //     // target: 'http://vivo-db.cr-nielsen.com/', // prod, 临时连接做测试, 后期需要改回dev.
-  //     // target: 'http://10.227.48.98:8080/', // jinku的本机
-  //     // target: 'http://10.227.97.83:8080/', // 后端开发
+  //     target: ''
   //     secure: false,
   //     changeOrigin: true,
   //   },

@@ -4,11 +4,6 @@ const envConfig = {
   modules: isTest && 'auto',
 };
 module.exports = {
-	presets: [['@babel/preset-env', envConfig], '@babel/preset-typescript', '@babel/preset-react'],
-	plugins: [
-		// prepare
-		'@babel/plugin-transform-runtime',
-		// Stage 3
-		'@babel/plugin-syntax-import-meta',
-	]
-}
+  presets: [['@babel/preset-env', envConfig], '@babel/preset-typescript', '@babel/preset-react'],
+  plugins: [],
+};
