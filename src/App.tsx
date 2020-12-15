@@ -10,6 +10,7 @@ const App: React.FC<AppProp> = () => {
     <>
       <p>hello,world111!</p>
     </>
+    {/** test代码在安卓编写  */}
   );
 };
 export default App;
